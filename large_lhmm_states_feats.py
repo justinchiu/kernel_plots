@@ -31,6 +31,7 @@ g.set_axis_labels("Number of states", "PPL")
 g.legend.set_title("State:Features")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
+g.set(ylim=(135,195))
 g.tight_layout()
 g.savefig("lhmm-states-features.png")
 
@@ -38,13 +39,14 @@ g.savefig("lhmm-states-features.png")
 data = np.array([
     #16k  8k   4k 
     (146, 149, 155), # softmax
-    (  1, 142, 154), # 4:1
-    (  1, 146, 156), # 8:1
+    (144, 139, 146), # 2:1
+    (144, 142, 154), # 4:1
+    (147, 146, 156), # 8:1
 ])
 
 df = pd.DataFrame(
     data.T,
-    columns=["softmax", "4:1", "8:1"],
+    columns=["softmax", "2:1", "4:1", "8:1"],
     index=[16384, 8192, 4096],
 )
 
@@ -53,6 +55,7 @@ g.set_axis_labels("Number of states", "PPL")
 g.legend.set_title("State:Features")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
+g.set(ylim=(135,195))
 g.tight_layout()
 g.savefig("lhmm-states-features-dropout.png")
 
