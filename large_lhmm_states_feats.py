@@ -7,8 +7,8 @@ import math
 #sns.set_theme(style="darkgrid")
 #sns.set_context("paper", font_scale=2)
 #sns.set_context(font_scale=10)
-sns.set_theme(style="darkgrid")
-sns.set(font_scale=1.5)
+#sns.set(font_scale=1.5)
+sns.set_theme(style="white", font_scale=1.5)
 
 data = np.array([
     #16k  8k   4k   2k   1k   
@@ -27,8 +27,8 @@ df = pd.DataFrame(
 )
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
-g.set_axis_labels("Number of states", "PPL")
-g.legend.set_title("State:Features")
+g.set_axis_labels("Number of states", "Valid PPL")
+g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.set(ylim=(135,195))
@@ -37,22 +37,22 @@ g.savefig("lhmm-states-features.png")
 
 
 data = np.array([
-    #16k  8k   4k 
-    (146, 149, 155), # softmax
-    (144, 139, 146), # 2:1
-    (144, 142, 154), # 4:1
-    (147, 146, 156), # 8:1
+    #16k  8k   4k   2k 1k 
+    (146, 149, 155, 163, 175,), # softmax
+    (144, 139, 146, 159, 168,), # 2:1
+    (144, 142, 154, 169, 178,), # 4:1
+    (147, 146, 156, 180, 189,), # 8:1
 ])
 
 df = pd.DataFrame(
     data.T,
     columns=["softmax", "2:1", "4:1", "8:1"],
-    index=[16384, 8192, 4096],
+    index=[16384, 8192, 4096, 2048, 1024],
 )
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
-g.set_axis_labels("Number of states", "PPL")
-g.legend.set_title("State:Features")
+g.set_axis_labels("Number of states", "Valid PPL")
+g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.set(ylim=(135,195))
@@ -60,23 +60,48 @@ g.tight_layout()
 g.savefig("lhmm-states-features-dropout.png")
 
 data = np.array([
-    #16k   8k    4k 
-    (5518, 1571, 550), # softmax
-    (3992, 1139, 398), # 2:1
-    (2197,  692, 304), # 4:1
-    (1284,  462, 259), # 8:1
+    #16k   8k    4k   2k 1k
+    (3415, 1027, 377, 254, 250,), # softmax # rerun bsz
+    (3992, 1139, 398, 290, 216,), # 2:1
+    (2197,  692, 304, 234, 282,), # 4:1 # rerun 1k
+    (1284,  462, 259, 226, 276,), # 8:1 # rerun 1k
 ])
 
 df = pd.DataFrame(
     data.T,
     columns=["softmax", "2:1", "4:1", "8:1"],
-    index=[16384, 8192, 4096],
+    index=[16384, 8192, 4096, 2048, 1024],
 )
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
 g.set_axis_labels("Number of states", "Secs / Epoch")
-g.legend.set_title("State:Features")
+g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.tight_layout()
 g.savefig("lhmm-states-features-speed.png")
+
+
+data = np.array([
+    #2k    1k    512   256   128
+    (5.78, 5.91, 6.19, 6.54, 7.10,), # softmax
+    (5.77, 5.78, 6.27, 6.71, 7.22,), # 2:1
+    (5.83, 5.93, 6.38, 6.77, 7.26,), # 4:1
+    (5.93, 6.00, 6.45, 6.88, 7.35,), # 8:1
+])
+
+df = pd.DataFrame(
+    data.T,
+    columns=["softmax", "2:1", "4:1", "8:1"],
+    index=[2048, 1024, 512, 256, 128],
+)
+
+g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
+g.set_axis_labels("Number of states", "Valid NLL")
+g.legend.set_title("State:Rank")
+ax = g.axes[0][0]
+ax.set_xscale("log", base=2)
+#g.set(ylim=(135,195))
+g.fig.get_axes()[0].legend(loc="upper right", title="State:Rank", frameon=False)
+g.tight_layout()
+g.savefig("music-states-features-dropout.png")
