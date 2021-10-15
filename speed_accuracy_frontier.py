@@ -52,7 +52,11 @@ g.set_axis_labels("log(Sec / Epoch)", "Valid PPL")
 g.legend.set_title("Model")
 # replace labels
 new_labels = ['softmax', 'low-rank']
-sns.move_legend(g, "upper right")
+sns.move_legend(g,
+    "upper right",
+    #"lower center",
+    #bbox_to_anchor=(.5, 1), ncol=2, title=None, frameon=False,
+)
 for t, l in zip(g.legend.texts, new_labels):
     t.set_text(l)
 ax = g.axes[0][0]
