@@ -119,15 +119,15 @@ g.savefig("pcfg-speed-accuracy.png")
 
 # HSMM
 softmax_data = np.array([
-    (1/1.28, 1.428e5, 0),
-    (1/.45, 1.427e5, 0),
-    (1/.13,  1.426e5, 0),
+    (1/1.28, 1.428, 0),
+    (1/.45, 1.427, 0),
+    (1/.13,  1.426, 0),
 ])
 lhmm_data = np.array((
-    (1/.24, 1.427e5, 1),
-    (1/.20, 1.426e5, 1),
-    (1/.18, 1.424e5, 1),
-    (1/.10, 1.423e5, 1),
+    (1/.24, 1.427, 1),
+    (1/.20, 1.426, 1),
+    (1/.18, 1.424, 1),
+    (1/.10, 1.423, 1),
 ))
 data = np.vstack((softmax_data, lhmm_data))
 
@@ -140,7 +140,7 @@ g = sns.relplot(
     data=df, x="speed", y="accuracy", hue="model", kind="scatter",
 )
 #g.set_axis_labels("log(Batch / Sec)", "Valid PPL")
-g.set_axis_labels("Sec / Batch", "Valid PPL")
+g.set_axis_labels("Sec / Batch", "Valid NLL (e5)")
 g.legend.set_title("Model")
 # replace labels
 new_labels = ['softmax', 'low-rank']
