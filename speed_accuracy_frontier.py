@@ -20,44 +20,65 @@ acc_data = np.array([
     (147, 146, 156, 180, 189,), # 8:1
 ])
 
-speed_data = np.array([
-    #16k   8k    4k   2k 1k
-    (3415, 1027, 377, 254, 250,), # softmax
-    (3992, 1139, 398, 290, 216,), # 2:1
-    (2197,  692, 304, 234, 282,), # 4:1 # rerun 1k
-    (1284,  462, 259, 226, 276,), # 8:1 # rerun 1k
+# 16k has .1 feature dropout...rerun all with feature dropout?
+# RERUNNING 8k with feature dropout.
+# use max perf for softmax hmm 16k?
+acc_data = np.array([
+    #16k  8k   4k   2k 1k 
+    (144, 152, 155, 163, 175,), # softmax
+    (141, 149, 154, 159, 168,), # 2:1
+    (139, 153, 156, 169, 178,), # 4:1
+    (141, 161, 163, 180, 189,), # 8:1
 ])
+
 speed_data = np.array([
     #16k   8k    4k   2k 1k
     (3415, 1027, 377, 254, 250,), # softmax
     (3992, 1139, 398, 290, 216,), # 2:1
     (2197,  692, 304, 234, 282,), # 4:1 # rerun 1k
     (1284,  462, 259, 226, 276,), # 8:1 # rerun 1k
+]) / 6519
+
+state_data = np.array([
+    (2**14, 2**13, 2**12, 2**11, 2**10),
+    (2**14, 2**13, 2**12, 2**11, 2**10),
+    (2**14, 2**13, 2**12, 2**11, 2**10),
+    (2**14, 2**13, 2**12, 2**11, 2**10),
+])
+
+ratio_data = np.array([
+    (1,1,1,1,1),
+    (2,2,2,2,2),
+    (4,4,4,4,4),
+    (8,8,8,8,8),
 ])
 
 softmax_data = np.vstack((
     speed_data[0],
     acc_data[0],
     np.zeros(5),
-    #["softmax"] * 5,
+    state_data[0],
+    ratio_data[0],
 ))
 lhmm_data = np.vstack((
     speed_data[1:].reshape(-1),
     acc_data[1:].reshape(-1),
     np.ones(15),
     #["low-rank"] * 15,
+    state_data[1:].reshape(-1),
+    ratio_data[1:].reshape(-1),
 ))
 data = np.hstack((softmax_data, lhmm_data))
 
 df = pd.DataFrame(
     data.T,
-    columns = ["speed", "accuracy", "model"],
+    columns = ["speed", "accuracy", "model", "states", "ratio"],
 )
 
 g = sns.relplot(
     data=df, x="speed", y="accuracy", hue="model", kind="scatter",
 )
-g.set_axis_labels("log(Sec / Epoch)", "Valid PPL")
+g.set_axis_labels("Sec / Batch", "Valid PPL")
 g.legend.set_title("Model")
 # replace labels
 new_labels = ['softmax', 'low-rank']
@@ -77,23 +98,23 @@ g.savefig("lhmm-speed-accuracy.png")
 
 # PCFG
 softmax_data = np.array([
-    (1/4.37, 252.60, 0),
-    (1/2.99, 234.01, 0),
-    (1/.98,  191.08, 0),
+    (1/4.37, 252.60, 0, 90, 90),
+    (1/2.99, 234.01, 0, 180, 180),
+    (1/.98,  191.08, 0, 300, 300),
 ])
 lhmm_data = np.array((
-    (1/3.75, 247.02, 1),
-    (1/3.74, 250.59, 1),
-    (1/3.55, 217.24, 1), 
-    (1/3.35, 213.81, 1),
-    (1/1.56, 203.47, 1),
-    (1/1.24, 194.25, 1),
+    (1/3.75, 247.02, 1, 90, 8),
+    (1/3.74, 250.59, 1, 90, 16),
+    (1/3.55, 217.24, 1, 180, 16), 
+    (1/3.35, 213.81, 1, 180, 32),
+    (1/1.56, 203.47, 1, 300, 32),
+    (1/1.24, 194.25, 1, 300, 64),
 ))
 data = np.vstack((softmax_data, lhmm_data))
 
 df = pd.DataFrame(
     data,
-    columns = ["speed", "accuracy", "model"],
+    columns = ["speed", "accuracy", "model", "states", "rank"],
 )
 
 g = sns.relplot(
@@ -112,28 +133,28 @@ sns.move_legend(g,
 for t, l in zip(g.legend.texts, new_labels):
     t.set_text(l)
 ax = g.axes[0][0]
-#ax.set_xscale("log", base=2)
+ax.set_xscale("log", base=2)
 #ax.set_yscale("log", base=2)
 g.tight_layout()
 g.savefig("pcfg-speed-accuracy.png")
 
 # HSMM
 softmax_data = np.array([
-    (1/1.28, 1.428, 0),
-    (1/.45, 1.427, 0),
-    (1/.13,  1.426, 0),
+    (1/1.28, 1.428, 0, 2**6, 0),
+    (1/.45, 1.427, 0, 2**7, 0),
+    (1/.13,  1.426, 0, 2**8, 0),
 ])
 lhmm_data = np.array((
-    (1/.24, 1.427, 1),
-    (1/.20, 1.426, 1),
-    (1/.18, 1.424, 1),
-    (1/.10, 1.423, 1),
+    (1/.24, 1.427, 1, 2**7, 2**7),
+    (1/.20, 1.426, 1, 2**8, 2**6),
+    (1/.18, 1.424, 1, 2**9, 2**5),
+    (1/.10, 1.423, 1, 2**10, 2**4),
 ))
 data = np.vstack((softmax_data, lhmm_data))
 
 df = pd.DataFrame(
     data,
-    columns = ["speed", "accuracy", "model"],
+    columns = ["speed", "accuracy", "model", "states", "rank"],
 )
 
 g = sns.relplot(
@@ -152,8 +173,29 @@ sns.move_legend(g,
 for t, l in zip(g.legend.texts, new_labels):
     t.set_text(l)
 ax = g.axes[0][0]
-#ax.set_xscale("log", base=2)
+ax.set_xscale("log", base=2)
 #ax.set_yscale("log", base=2)
 g.tight_layout()
 g.savefig("hsmm-speed-accuracy.png")
+
+g = sns.relplot(
+    data=df, x="states", y="accuracy", hue="model", kind="line",
+    linewidth=3,
+)
+g.set_axis_labels("Num states", "Valid NLL (e5)")
+g.legend.set_title("Model")
+# replace labels
+new_labels = ['softmax', 'low-rank']
+sns.move_legend(g,
+    "upper right",
+    #"lower center",
+    #bbox_to_anchor=(.5, 1), ncol=2, title=None, frameon=False,
+)
+for t, l in zip(g.legend.texts, new_labels):
+    t.set_text(l)
+ax = g.axes[0][0]
+ax.set_xscale("log", base=2)
+#ax.set_yscale("log", base=2)
+g.tight_layout()
+g.savefig("hsmm-accuracy.png")
 

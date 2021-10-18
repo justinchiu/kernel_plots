@@ -65,7 +65,7 @@ data = np.array([
     (3992, 1139, 398, 290, 216,), # 2:1
     (2197,  692, 304, 234, 282,), # 4:1 # rerun 1k
     (1284,  462, 259, 226, 276,), # 8:1 # rerun 1k
-])
+]) / 6519
 
 df = pd.DataFrame(
     data.T,
@@ -74,7 +74,16 @@ df = pd.DataFrame(
 )
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
-g.set_axis_labels("Number of states", "Secs / Epoch")
+g.set_axis_labels("Number of states", "Secs / Batch")
+g.legend.set_title("State:Rank")
+ax = g.axes[0][0]
+ax.set_yscale("log", base=2)
+ax.set_xscale("log", base=2)
+g.tight_layout()
+g.savefig("lhmm-states-features-speed-log.png")
+
+g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
+g.set_axis_labels("Number of states", "Secs / Batch")
 g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
