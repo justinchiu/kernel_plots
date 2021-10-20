@@ -10,6 +10,8 @@ import math
 #sns.set(font_scale=1.5)
 sns.set_theme(style="white", font_scale=1.5)
 
+pal = sns.color_palette("flare", 1) + sns.color_palette("crest", 3)
+
 data = np.array([
     #16k  8k   4k   2k   1k   
     (159, 160, 165, 172, 182,), # softmax
@@ -57,7 +59,10 @@ acc_df = pd.DataFrame(
     index=[16384, 8192, 4096, 2048, 1024],
 )
 
-g = sns.relplot(data=acc_df, kind="line", linewidth=3, aspect=1.3)
+g = sns.relplot(data=acc_df, kind="line", linewidth=3, aspect=1.3,
+    dashes=False,
+    palette=pal,
+)
 g.set_axis_labels("Number of states", "Valid PPL")
 g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
@@ -80,7 +85,10 @@ speed_df = pd.DataFrame(
     index=[16384, 8192, 4096, 2048, 1024],
 )
 
-g = sns.relplot(data=speed_df, kind="line", linewidth=3, aspect=1.3)
+g = sns.relplot(data=speed_df, kind="line", linewidth=3, aspect=1.3,
+    dashes=False,
+    palette=pal,
+)
 g.set_axis_labels("Number of states", "Secs / Batch")
 g.legend.set_title("State:Rank")
 ax = g.axes[0][0]
@@ -101,7 +109,8 @@ g.savefig("lhmm-states-features-speed.png")
 pal = sns.color_palette("flare", 1) + sns.color_palette("crest", 3)
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16,6))
 sns.lineplot(
-    data=acc_df, linewidth=3, ax=ax1, legend=False, dashes=False,
+    data=acc_df, linewidth=3, ax=ax1, legend=False,
+    dashes=False,
     palette=pal,
 )
 ax1.set_xlabel("Number of states")
