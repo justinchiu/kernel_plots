@@ -156,7 +156,10 @@ df = pd.DataFrame(
     index=[2048, 1024, 512, 256, 128],
 )
 
-g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
+g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3,
+    dashes=False,
+    palette=pal,
+)
 g.set_axis_labels("Number of states", "Valid NLL")
 g.legend.set_title("State:Rank")
 ax = g.axes[0][0]

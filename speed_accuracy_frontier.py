@@ -95,6 +95,25 @@ ax.set_xscale("log", base=2)
 g.tight_layout()
 g.savefig("lhmm-speed-accuracy.png")
 
+g = sns.relplot(
+    data=df, x="speed", y="accuracy", hue="model", kind="scatter",
+)
+g.set_axis_labels("Sec / Batch", "Valid PPL")
+g.legend.set_title("Model")
+# replace labels
+new_labels = ['softmax', 'low-rank']
+sns.move_legend(g,
+    "upper right",
+    #bbox_to_anchor=(.5, 1), ncol=2, title=None, frameon=False,
+)
+for t, l in zip(g.legend.texts, new_labels):
+    t.set_text(l)
+ax = g.axes[0][0]
+ax.set_xscale("log", base=2)
+#ax.set_yscale("log", base=2)
+g.tight_layout()
+g.savefig("lhmm-speed-accuracy-nolegend.png")
+
 
 # PCFG
 softmax_data = np.array([
