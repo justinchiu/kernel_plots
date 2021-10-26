@@ -70,13 +70,13 @@ lhmm_data = np.vstack((
 ))
 data = np.hstack((softmax_data, lhmm_data))
 
-df = pd.DataFrame(
+hmm_df = pd.DataFrame(
     data.T,
     columns = ["speed", "accuracy", "model", "states", "ratio"],
 )
 
 g = sns.relplot(
-    data=df, x="speed", y="accuracy", hue="model", kind="scatter",
+    data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
 g.legend.set_title("Model")
@@ -96,7 +96,7 @@ g.tight_layout()
 g.savefig("lhmm-speed-accuracy.png")
 
 g = sns.relplot(
-    data=df, x="speed", y="accuracy", hue="model", kind="scatter",
+    data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
 g.legend.set_title("Model")
@@ -131,13 +131,13 @@ lhmm_data = np.array((
 ))
 data = np.vstack((softmax_data, lhmm_data))
 
-df = pd.DataFrame(
+pcfg_df = pd.DataFrame(
     data,
     columns = ["speed", "accuracy", "model", "states", "rank"],
 )
 
 g = sns.relplot(
-    data=df, x="speed", y="accuracy", hue="model", kind="scatter",
+    data=pcfg_df, x="speed", y="accuracy", hue="model", kind="scatter",
 )
 #g.set_axis_labels("log(Batch / Sec)", "Valid PPL")
 g.set_axis_labels("Sec / Batch", "Valid PPL")
@@ -217,4 +217,39 @@ ax.set_xscale("log", base=2)
 #ax.set_yscale("log", base=2)
 g.tight_layout()
 g.savefig("hsmm-accuracy.png")
+
+
+# JOINT HMM + PCFG
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
+sns.scatterplot(
+    data=hmm_df, x="speed", y="accuracy", hue="model", ax=ax1,
+    legend=False,
+)
+sns.scatterplot(
+    data=pcfg_df, x="speed", y="accuracy", hue="model", ax=ax2,
+)
+
+ax1.set_title("HMM Speed vs Accuracy")
+ax2.set_title("PCFG Speed vs Accuracy")
+
+ax1.set_xlabel("Sec / Batch")
+ax1.set_ylabel("Valid PPL")
+ax2.set_xlabel("Sec / Batch")
+ax2.set_ylabel("Valid PPL")
+
+ax1.set_xscale("log", base=2)
+ax2.set_xscale("log", base=2)
+
+ax1.legend().set_visible(False)
+#ax2.legend().set_visible(False)
+
+ax2.legend().set_title("Model")
+# replace labels
+new_labels = ['softmax', 'low-rank']
+for t, l in zip(ax2.legend().texts, new_labels):
+    t.set_text(l)
+#ax.set_yscale("log", base=2)
+fig.tight_layout()
+fig.savefig("hmm-pcfg-speed-accuracy.png")
 

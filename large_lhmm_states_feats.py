@@ -24,13 +24,13 @@ df = pd.DataFrame(
     data.T,
     #columns=[4096, 2048, 1024, 512],
     #index=data[:,0],
-    columns=["softmax", "2:1", "4:1", "8:1"],
+    columns=["softmax", "low rank (2:1)", "low rank (4:1)", "low rank (8:1)"],
     index=[16384, 8192, 4096, 2048, 1024],
 )
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
 g.set_axis_labels("Number of states", "Valid PPL")
-g.legend.set_title("State:Rank")
+g.legend.set_title("Parameterization")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.set(ylim=(135,195))
@@ -55,7 +55,7 @@ data = np.array([
 
 acc_df = pd.DataFrame(
     data.T,
-    columns=["softmax", "2:1", "4:1", "8:1"],
+    columns=["softmax", "low rank (2:1)", "low rank (4:1)", "low rank (8:1)"],
     index=[16384, 8192, 4096, 2048, 1024],
 )
 
@@ -64,7 +64,7 @@ g = sns.relplot(data=acc_df, kind="line", linewidth=3, aspect=1.3,
     palette=pal,
 )
 g.set_axis_labels("Number of states", "Valid PPL")
-g.legend.set_title("State:Rank")
+g.legend.set_title("Parameterization")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.set(ylim=(135,195))
@@ -81,7 +81,7 @@ data = np.array([
 
 speed_df = pd.DataFrame(
     data.T,
-    columns=["softmax", "2:1", "4:1", "8:1"],
+    columns=["softmax", "low rank (2:1)", "low rank (4:1)", "low rank (8:1)"],
     index=[16384, 8192, 4096, 2048, 1024],
 )
 
@@ -90,7 +90,7 @@ g = sns.relplot(data=speed_df, kind="line", linewidth=3, aspect=1.3,
     palette=pal,
 )
 g.set_axis_labels("Number of states", "Secs / Batch")
-g.legend.set_title("State:Rank")
+g.legend.set_title("Parameterization")
 ax = g.axes[0][0]
 ax.set_yscale("log", base=2)
 ax.set_xscale("log", base=2)
@@ -99,7 +99,7 @@ g.savefig("lhmm-states-features-speed-log.png")
 
 g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
 g.set_axis_labels("Number of states", "Secs / Batch")
-g.legend.set_title("State:Rank")
+g.legend.set_title("Parameterization")
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 g.tight_layout()
@@ -135,7 +135,7 @@ l4 = fig.legend(
     loc="upper center",
     borderaxespad=0,
     ncol=4,
-    title="State:Rank",
+    title="Parameterization",
 )
 
 fig.savefig("lhmm-speed-acc-joint.png", bbox_inches="tight")
@@ -152,7 +152,7 @@ data = np.array([
 
 df = pd.DataFrame(
     data.T,
-    columns=["softmax", "2:1", "4:1", "8:1"],
+    columns=["softmax", "low rank (2:1)", "low rank (4:1)", "low rank (8:1)"],
     index=[2048, 1024, 512, 256, 128],
 )
 
@@ -161,10 +161,11 @@ g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3,
     palette=pal,
 )
 g.set_axis_labels("Number of states", "Valid NLL")
-g.legend.set_title("State:Rank")
+g.legend.set_title("Paramerization")
+g.legend.set_visible(False)
 ax = g.axes[0][0]
 ax.set_xscale("log", base=2)
 #g.set(ylim=(135,195))
-g.fig.get_axes()[0].legend(loc="upper right", title="State:Rank", frameon=False)
+g.fig.get_axes()[0].legend(loc="upper right", title="Parameterization", frameon=False)
 g.tight_layout()
 g.savefig("music-states-features-dropout.png")
