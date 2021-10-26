@@ -53,12 +53,21 @@ ratio_data = np.array([
     (8,8,8,8,8),
 ])
 
+size_data = np.array([
+    (16384,8192,4096,2048,1024),
+    (16384,8192,4096,2048,1024),
+    (16384,8192,4096,2048,1024),
+    (16384,8192,4096,2048,1024),
+])
+
+
 softmax_data = np.vstack((
     speed_data[0],
     acc_data[0],
     np.zeros(5),
     state_data[0],
     ratio_data[0],
+    size_data[0],
 ))
 lhmm_data = np.vstack((
     speed_data[1:].reshape(-1),
@@ -67,25 +76,37 @@ lhmm_data = np.vstack((
     #["low-rank"] * 15,
     state_data[1:].reshape(-1),
     ratio_data[1:].reshape(-1),
+    size_data[1:].reshape(-1),
 ))
 data = np.hstack((softmax_data, lhmm_data))
 
 hmm_df = pd.DataFrame(
     data.T,
-    columns = ["speed", "accuracy", "model", "states", "ratio"],
+    columns = ["speed", "accuracy", "model", "states", "ratio", "size"],
 )
 
 g = sns.relplot(
     data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
+    size="size",
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
-g.legend.set_title("Model")
+#g.legend.set_title("Model")
 # replace labels
-new_labels = ['softmax', 'low-rank']
+new_labels = [
+    "Parameterization",
+    'softmax',
+    'low-rank',
+    "Num states",
+    "1024",
+    "2048",
+    "4096",
+    "8192",
+    "16384",
+]
 sns.move_legend(g,
-    "upper right",
+    "right",
     #"lower center",
-    #bbox_to_anchor=(.5, 1), ncol=2, title=None, frameon=False,
+    bbox_to_anchor=(1.1, 0.65), ncol=1, title=None, frameon=False,
 )
 for t, l in zip(g.legend.texts, new_labels):
     t.set_text(l)
@@ -97,6 +118,7 @@ g.savefig("lhmm-speed-accuracy.png")
 
 g = sns.relplot(
     data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
+    size="size",
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
 g.legend.set_title("Model")
@@ -117,7 +139,7 @@ g.savefig("lhmm-speed-accuracy-nolegend.png")
 
 # PCFG
 softmax_data = np.array([
-    (1/4.37, 252.60, 0, 90, 90),
+    (1/4.37, 252.60, 0, 90,  90),
     (1/2.99, 234.01, 0, 180, 180),
     (1/.98,  191.08, 0, 300, 300),
 ])
@@ -138,16 +160,23 @@ pcfg_df = pd.DataFrame(
 
 g = sns.relplot(
     data=pcfg_df, x="speed", y="accuracy", hue="model", kind="scatter",
+    size="states",
 )
 #g.set_axis_labels("log(Batch / Sec)", "Valid PPL")
 g.set_axis_labels("Sec / Batch", "Valid PPL")
-g.legend.set_title("Model")
 # replace labels
-new_labels = ['softmax', 'low-rank']
+new_labels = [
+    "Parameterization",
+    'softmax',
+    'low-rank',
+    "Num states",
+    "90",
+    "180",
+    "300",
+]
 sns.move_legend(g,
-    "upper right",
-    #"lower center",
-    #bbox_to_anchor=(.5, 1), ncol=2, title=None, frameon=False,
+    loc="right",
+    bbox_to_anchor=(1.1, 0.7), ncol=1, title=None, frameon=False,
 )
 for t, l in zip(g.legend.texts, new_labels):
     t.set_text(l)
