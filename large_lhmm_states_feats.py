@@ -97,7 +97,7 @@ ax.set_xscale("log", base=2)
 g.tight_layout()
 g.savefig("lhmm-states-features-speed-log.png")
 
-g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3)
+g = sns.relplot(data=df, kind="line", linewidth=3, aspect=1.3, dashes=False, palette=pal)
 g.set_axis_labels("Number of states", "Secs / Batch")
 g.legend.set_title("Parameterization")
 ax = g.axes[0][0]

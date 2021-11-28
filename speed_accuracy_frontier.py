@@ -10,6 +10,7 @@ import math
 #sns.set(font_scale=1.5)
 sns.set_theme(style="white", font_scale=1.5)
 
+pal = sns.color_palette("flare", 1) + sns.color_palette("crest", 3)
 
 # HMM
 acc_data = np.array([
@@ -88,6 +89,7 @@ hmm_df = pd.DataFrame(
 g = sns.relplot(
     data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
     size="size",
+    palette = (pal[0], pal[-1]),
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
 #g.legend.set_title("Model")
@@ -161,6 +163,7 @@ pcfg_df = pd.DataFrame(
 g = sns.relplot(
     data=pcfg_df, x="speed", y="accuracy", hue="model", kind="scatter",
     size="states",
+    palette = (pal[0], pal[-1]),
 )
 #g.set_axis_labels("log(Batch / Sec)", "Valid PPL")
 g.set_axis_labels("Sec / Batch", "Valid PPL")
