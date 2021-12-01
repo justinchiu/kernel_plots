@@ -89,6 +89,7 @@ hmm_df = pd.DataFrame(
 g = sns.relplot(
     data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
     size="size",
+    sizes = (100, 400),
     palette = (pal[0], pal[-1]),
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
@@ -121,6 +122,8 @@ g.savefig("lhmm-speed-accuracy.png")
 g = sns.relplot(
     data=hmm_df, x="speed", y="accuracy", hue="model", kind="scatter",
     size="size",
+    palette = (pal[0], pal[-1]),
+    sizes = (100, 400),
 )
 g.set_axis_labels("Sec / Batch", "Valid PPL")
 g.legend.set_title("Model")
@@ -163,6 +166,7 @@ pcfg_df = pd.DataFrame(
 g = sns.relplot(
     data=pcfg_df, x="speed", y="accuracy", hue="model", kind="scatter",
     size="states",
+    sizes = (100, 400),
     palette = (pal[0], pal[-1]),
 )
 #g.set_axis_labels("log(Batch / Sec)", "Valid PPL")
